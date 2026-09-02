@@ -6,6 +6,7 @@ namespace App\Application\Handlers;
 
 use App\Application\Actions\ActionError;
 use App\Application\Actions\ActionPayload;
+use App\Domain\Resume\ResumeUpstreamException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Exception\HttpBadRequestException;
 use Slim\Exception\HttpException;
@@ -48,6 +49,12 @@ class HttpErrorHandler extends SlimErrorHandler
             } elseif ($exception instanceof HttpNotImplementedException) {
                 $error->setType(ActionError::NOT_IMPLEMENTED);
             }
+        }
+
+        if ($exception instanceof ResumeUpstreamException) {
+            $statusCode = 502;
+            $error->setType(ActionError::UPSTREAM_ERROR);
+            $error->setDescription($exception->getMessage());
         }
 
         if (

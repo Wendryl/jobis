@@ -58,6 +58,21 @@ class TestCase extends PHPUnit_TestCase
         $routes = require __DIR__ . '/../app/routes.php';
         $routes($app);
 
+        // Register middleware required for error handling and body parsing
+        $app->addRoutingMiddleware();
+        $app->addBodyParsingMiddleware();
+
+        $settings = $container->get(\App\Application\Settings\SettingsInterface::class);
+        $callableResolver = $app->getCallableResolver();
+        $responseFactory = $app->getResponseFactory();
+        $errorHandler = new \App\Application\Handlers\HttpErrorHandler($callableResolver, $responseFactory);
+        $errorMiddleware = $app->addErrorMiddleware(
+            $settings->get('displayErrorDetails'),
+            $settings->get('logError'),
+            $settings->get('logErrorDetails')
+        );
+        $errorMiddleware->setDefaultErrorHandler($errorHandler);
+
         return $app;
     }
 

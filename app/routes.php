@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Application\Actions\Resume\GenerateResumeAction;
+use App\Application\Actions\Resume\UploadResumeAction;
 use App\Application\Actions\User\ListUsersAction;
 use App\Application\Actions\User\ViewUserAction;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -24,4 +26,7 @@ return function (App $app) {
         $group->get('', ListUsersAction::class);
         $group->get('/{id}', ViewUserAction::class);
     });
+
+    $app->post('/resume', UploadResumeAction::class);
+    $app->post('/resume/generate', GenerateResumeAction::class);
 };

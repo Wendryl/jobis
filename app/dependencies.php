@@ -3,7 +3,14 @@
 declare(strict_types=1);
 
 use App\Application\Settings\SettingsInterface;
+use App\Domain\Resume\ResumeGenerator;
+use App\Domain\Resume\ResumePdfGenerator;
+use App\Domain\Resume\ResumeRateLimiter;
+use App\Infrastructure\RateLimiter\SymfonyResumeRateLimiter;
+use App\Infrastructure\ResumeGenerator\GeminiResumeGenerator;
+use App\Infrastructure\ResumePdfGenerator\DompdfResumePdfGenerator;
 use DI\ContainerBuilder;
+use GuzzleHttp\Client;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
@@ -25,6 +32,21 @@ return function (ContainerBuilder $containerBuilder) {
             $logger->pushHandler($handler);
 
             return $logger;
+        },
+        ResumeGenerator::class => function (ContainerInterface $c) {
+            $settings = $c->get(SettingsInterface::class)->get('gemini');
+            $httpClient = new Client(['timeout' => $settings['timeout']]);
+
+            return new GeminiResumeGenerator($httpClient, $settings['api_key'], $settings['model']);
+        },
+        ResumePdfGenerator::class => \DI\autowire(DompdfResumePdfGenerator::class),
+        ResumeRateLimiter::class => function (ContainerInterface $c) {
+            $settings = $c->get(SettingsInterface::class)->get('resume');
+
+            return new SymfonyResumeRateLimiter(
+                $settings['cache_path'],
+                $settings['rate_limit']['requests_per_minute']
+            );
         },
     ]);
 };
