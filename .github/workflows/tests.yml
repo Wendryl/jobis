@@ -29,9 +29,9 @@ jobs:
             - name: Tests
               run: vendor/bin/phpunit --coverage-clover clover.xml
 
-            - name: Upload coverage results to Coveralls
+            - name: Upload coverage to Codecov
+              uses: codecov/codecov-action@v5
+              with:
+                  files: clover.xml
               env:
-                  COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: |
-                  composer require php-coveralls/php-coveralls -n -W
-                  vendor/bin/php-coveralls --coverage_clover=clover.xml -v
+                  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
