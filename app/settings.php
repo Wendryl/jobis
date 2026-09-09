@@ -23,7 +23,7 @@ return function (ContainerBuilder $containerBuilder) {
                 ],
                 'gemini' => [
                     'api_key' => $_ENV['GEMINI_API_KEY'] ?? '',
-                    'model' => $_ENV['GEMINI_MODEL'] ?? 'gemini-2.0-flash',
+                    'model' => $_ENV['GEMINI_MODEL'] ?? 'gemini-3.7-flash',
                     'timeout' => 120,
                 ],
                 'resume' => [

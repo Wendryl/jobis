@@ -51,10 +51,12 @@ class GenerateResumeAction extends ResumeAction
 
         $cacheKey = $this->buildCacheKey($jobDescription, $resumeContent);
 
+        $candidateName = $this->extractCandidateName($resumeContent);
+
         $cachedPath = $this->resumeRepository->getCachedPdfPath($cacheKey);
         if ($cachedPath !== null) {
             $this->logger->info('Serving cached resume PDF.');
-            return $this->respondWithPdf(file_get_contents($cachedPath));
+            return $this->respondWithPdf(file_get_contents($cachedPath), $candidateName);
         }
 
         if (!$this->resumeRateLimiter->isAllowed()) {
@@ -69,7 +71,19 @@ class GenerateResumeAction extends ResumeAction
 
         $this->logger->info('Resume PDF generated.');
 
-        return $this->respondWithPdf($pdfContent);
+        return $this->respondWithPdf($pdfContent, $candidateName);
+    }
+
+    private function extractCandidateName(string $resumeContent): string
+    {
+        if (preg_match('/^#\s+(.+)/m', $resumeContent, $matches)) {
+            $name = trim($matches[1]);
+            $name = preg_replace('/\s+/', '-', $name);
+            $name = preg_replace('/[^\p{L}\-]/u', '', $name);
+            return $name !== '' ? $name : 'resume';
+        }
+
+        return 'resume';
     }
 
     private function buildCacheKey(string $jobDescription, string $resumeContent): string
@@ -82,13 +96,13 @@ class GenerateResumeAction extends ResumeAction
         return mb_strtolower(trim(preg_replace('/\s+/', ' ', $value) ?? ''));
     }
 
-    private function respondWithPdf(string $pdfContent): Response
+    private function respondWithPdf(string $pdfContent, string $candidateName): Response
     {
         $this->response->getBody()->write($pdfContent);
 
         return $this->response
                     ->withHeader('Content-Type', 'application/pdf')
-                    ->withHeader('Content-Disposition', 'attachment; filename="resume.pdf"')
+                    ->withHeader('Content-Disposition', sprintf('attachment; filename="%s.pdf"', $candidateName))
                     ->withHeader('Content-Length', (string) strlen($pdfContent));
     }
 }

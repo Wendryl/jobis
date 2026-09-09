@@ -33,7 +33,8 @@
         "slim/slim": "^4.10",
         "symfony/cache": "^8.1",
         "symfony/rate-limiter": "^8.1",
-        "symfony/string": "^8.1"
+        "symfony/string": "^8.1",
+        "vlucas/phpdotenv": "^5.7"
     },
     "require-dev": {
         "jangregor/phpstan-prophecy": "^1.0.0",

@@ -80,6 +80,7 @@ Rules:
 - Match the language of the job description (if the job description is Portuguese, write in Portuguese).
 - Structure the output with clear Markdown headings and bullet points.
 - Output ONLY the resume Markdown, with no preamble or commentary.
+- Try to keep it concise and short, preferably a single page resume.
 PROMPT;
     }
 
