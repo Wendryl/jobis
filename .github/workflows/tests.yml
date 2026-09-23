@@ -1,0 +1,37 @@
+name: Tests
+
+on: [push, pull_request]
+
+jobs:
+    tests:
+        name: Tests
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Set up PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.4'
+                  coverage: xdebug
+
+            - name: Install dependencies with Composer
+              uses: ramsey/composer-install@v3
+
+            - name: Coding standards
+              run: vendor/bin/phpcs
+
+            - name: Static analysis
+              run: vendor/bin/phpstan
+
+            - name: Tests
+              run: vendor/bin/phpunit --coverage-clover clover.xml
+
+            - name: Upload coverage to Codecov
+              uses: codecov/codecov-action@v5
+              with:
+                  files: clover.xml
+              env:
+                  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

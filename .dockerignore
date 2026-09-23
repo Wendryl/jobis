@@ -1,0 +1,14 @@
+vendor/
+var/
+logs/
+.git/
+.github/
+.vscode/
+tests/
+*.md
+docker-compose.yml
+phpcs.xml
+phpstan.neon.dist
+phpunit.xml
+render.yaml
+.dockerignore
