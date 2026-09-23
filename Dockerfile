@@ -21,7 +21,8 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts
 
 COPY . .
 
-RUN mkdir -p var/cache var/resumes logs \
+RUN cp .env.example .env \
+    && mkdir -p var/cache var/resumes logs \
     && chown -R www-data:www-data var logs
 
 COPY docker/nginx.conf /etc/nginx/http.d/default.conf

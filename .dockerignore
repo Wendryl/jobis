@@ -11,4 +11,5 @@ phpcs.xml
 phpstan.neon.dist
 phpunit.xml
 render.yaml
+.env
 .dockerignore
