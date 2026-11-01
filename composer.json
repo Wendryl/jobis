@@ -31,7 +31,7 @@
         "php-di/php-di": "^7.0",
         "slim/psr7": "^1.5",
         "slim/slim": "^4.10",
-        "smalot/pdfparser": "^2.12",
+        "smalot/pdfparser": "^2.13",
         "symfony/cache": "^8.1",
         "symfony/rate-limiter": "^8.1",
         "symfony/string": "^8.1",
